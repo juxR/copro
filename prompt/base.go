@@ -3,7 +3,8 @@ package prompt
 import (
 	"os"
 
-	keyboard "github.com/jteeuwen/keyboard/termbox"
+	keyboard "github.com/jteeuwen/keyboard"
+	termbox "github.com/jteeuwen/keyboard/termbox"
 	term "github.com/nsf/termbox-go"
 )
 
@@ -32,7 +33,7 @@ func NewApp() *App {
 		DownNavigationKey: []string{"down", "j"},
 		Cancelkey:         []string{"ctrl+c", "esc"},
 	}
-	app.Keyboard = keyboard.New()
+	app.Keyboard = termbox.New()
 
 	return app
 }
@@ -42,7 +43,7 @@ func (app *App) Run() {
 	if err != nil {
 		panic(err)
 	}
-	term.HideTCursor()
+	term.HideCursor()
 
 	app.registerEvents()
 }

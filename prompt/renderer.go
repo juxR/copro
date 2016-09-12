@@ -14,7 +14,7 @@ func (app *App) Renderer(buffer func()) {
 		term.Clear(term.ColorDefault, term.ColorDefault)
 		buffer()
 		term.Flush()
-		kb.Poll(term.PollEvent())
+		app.Keyboard.Poll(term.PollEvent())
 	}
 	term.Close()
 }

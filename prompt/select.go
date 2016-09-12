@@ -34,7 +34,7 @@ func (s *Select) Run() (SelectResult, error) {
 	app.Run()
 
 	app.Renderer(func() {
-		s.RenderHeader()
+		s.RenderHeader(app)
 		s.RenderChoices(app.pointer)
 	})
 
@@ -43,7 +43,7 @@ func (s *Select) Run() (SelectResult, error) {
 	return result, nil
 }
 
-func (s *Select) RenderHeader() {
+func (s *Select) RenderHeader(app *App) {
 	content := ""
 
 	if len(s.Question) <= 0 {
@@ -51,7 +51,7 @@ func (s *Select) RenderHeader() {
 	}
 
 	content += s.Question + " \n"
-	content += fmt.Sprintf("Press <%s> key to select an item", s.KeyboardConfig.ValidateKey[0])
+	content += fmt.Sprintf("Press <%s> key to select an item", app.KeyboardConfig.ValidateKey[0])
 
 	for index, _ := range s.Choices {
 		s.Choices[index].pointer = index
