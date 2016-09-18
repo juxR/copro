@@ -4,20 +4,29 @@ import (
 	"os"
 
 	keyboard "github.com/jteeuwen/keyboard"
-	termbox "github.com/jteeuwen/keyboard/termbox"
+	termbox "github.com/julienroland/keyboard-termbox"
 	term "github.com/nsf/termbox-go"
 )
 
 type App struct {
 	pointer        int
+	savedPointers  []int
 	done           bool
 	entryCount     int
 	KeyboardConfig KeyboardConfig
 	Keyboard       keyboard.Keyboard
 }
 
+type Choice struct {
+	ID      int
+	Label   string
+	Type    string
+	pointer int
+}
+
 type KeyboardConfig struct {
 	ValidateKey       []string
+	SelectKey         []string
 	UpNavigationKey   []string
 	DownNavigationKey []string
 	Cancelkey         []string
@@ -28,7 +37,8 @@ func NewApp() *App {
 	app.pointer = 0
 	app.done = false
 	app.KeyboardConfig = KeyboardConfig{
-		ValidateKey:       []string{"enter", "space"},
+		ValidateKey:       []string{"enter"},
+		SelectKey:         []string{"space", "o"},
 		UpNavigationKey:   []string{"up", "k"},
 		DownNavigationKey: []string{"down", "j"},
 		Cancelkey:         []string{"ctrl+c", "esc"},
@@ -52,6 +62,19 @@ func (app *App) registerEvents() {
 	app.Keyboard.Bind(func() {
 		os.Exit(1)
 	}, app.KeyboardConfig.Cancelkey...)
+
+	app.Keyboard.Bind(func() {
+		exist := false
+		for i, pointer := range app.savedPointers {
+			if app.pointer == pointer {
+				exist = true
+				app.savedPointers = append(app.savedPointers[:i], app.savedPointers[i+1:]...)
+			}
+		}
+		if !exist {
+			app.savedPointers = append(app.savedPointers, app.pointer)
+		}
+	}, app.KeyboardConfig.SelectKey...)
 
 	app.Keyboard.Bind(func() {
 		app.done = true

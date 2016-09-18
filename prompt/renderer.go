@@ -27,6 +27,29 @@ func displayCyan(msg string) {
 	printLine(msg, term.ColorCyan)
 }
 
+func displayYellow(msg string) {
+	printLine(msg, term.ColorYellow)
+}
+func displayBlack(msg string) {
+	printLine(msg, term.ColorBlack)
+}
+
+func displayBlue(msg string) {
+	printLine(msg, term.ColorBlue)
+}
+
+func displayRed(msg string) {
+	printLine(msg, term.ColorRed)
+}
+
+func displayGreen(msg string) {
+	printLine(msg, term.ColorGreen)
+}
+
+func displayWhite(msg string) {
+	printLine(msg, term.ColorWhite)
+}
+
 func printLine(msg string, foreground term.Attribute) {
 	row := strings.Split(msg, "\n")
 	for _, line := range row {

@@ -7,8 +7,10 @@ import (
 )
 
 type Select struct {
-	Question string
-	Choices  []*Choice
+	Question       string
+	Choices        []*Choice
+	SelectedChoice Choice
+	app            *App
 }
 
 type SelectResult struct {
@@ -16,34 +18,53 @@ type SelectResult struct {
 	Label string
 }
 
-type Choice struct {
-	ID      int
-	Label   string
-	Type    string
-	pointer int
-}
-
 func NewSelect() *Select {
 	selectList := new(Select)
+	app := NewApp()
+	selectList.app = app
+	selectList.app.Run()
 	return selectList
 }
 
 func (s *Select) Run() (SelectResult, error) {
-	app := NewApp()
-	app.entryCount = len(s.Choices) - 1
-	app.Run()
+	s.app.entryCount = len(s.Choices) - 1
+	s.setChoicePointer()
+	s.manageDefaultPointer()
 
-	app.Renderer(func() {
-		s.RenderHeader(app)
-		s.RenderChoices(app.pointer)
+	s.app.Renderer(func() {
+		s.RenderHeader()
+		s.RenderChoices(s.app.pointer)
 	})
 
-	choice := s.Choices[app.pointer]
+	choice := s.Choices[s.app.pointer]
 	result := SelectResult{ID: choice.ID, Label: choice.Label}
 	return result, nil
 }
 
-func (s *Select) RenderHeader(app *App) {
+func (s *Select) manageDefaultPointer() {
+	pointer, err := s.searchIdInChoice(s.SelectedChoice.ID, s.Choices)
+	if err == nil {
+		s.app.pointer = pointer
+	}
+
+}
+func (s *Select) searchIdInChoice(id int, choices []*Choice) (int, error) {
+	for _, choice := range choices {
+		if choice.ID == id {
+			return choice.pointer, nil
+		}
+	}
+	return 0, fmt.Errorf("Unable to find default value: %d", id)
+}
+
+func (s *Select) setChoicePointer() error {
+	for index, _ := range s.Choices {
+		s.Choices[index].pointer = index
+	}
+	return nil
+}
+
+func (s *Select) RenderHeader() {
 	content := ""
 
 	if len(s.Question) <= 0 {
@@ -51,11 +72,7 @@ func (s *Select) RenderHeader(app *App) {
 	}
 
 	content += s.Question + " \n"
-	content += fmt.Sprintf("Press <%s> key to select an item", app.KeyboardConfig.ValidateKey[0])
-
-	for index, _ := range s.Choices {
-		s.Choices[index].pointer = index
-	}
+	content += fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.ValidateKey[0])
 
 	display(content)
 }
