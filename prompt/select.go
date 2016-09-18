@@ -79,13 +79,7 @@ func (s *Select) RenderHeader() {
 
 func (s *Select) RenderChoices(currentPosition int) {
 
-	output := ""
 	for _, choice := range s.Choices {
-		if choice.Type == "separator" {
-			output += "\n"
-			display(output)
-			return
-		}
 		isSelected := false
 		if choice.pointer == currentPosition {
 			isSelected = true
@@ -99,7 +93,6 @@ func (s *Select) RenderChoices(currentPosition int) {
 
 		line += choice.Label
 
-		output += line
 		if isSelected {
 			displayCyan(line)
 			continue

@@ -13,6 +13,7 @@ type App struct {
 	savedPointers  []int
 	done           bool
 	entryCount     int
+	hideCursor     bool
 	KeyboardConfig KeyboardConfig
 	Keyboard       keyboard.Keyboard
 }
@@ -36,6 +37,7 @@ func NewApp() *App {
 	app := new(App)
 	app.pointer = 0
 	app.done = false
+	app.hideCursor = true
 	app.KeyboardConfig = KeyboardConfig{
 		ValidateKey:       []string{"enter"},
 		SelectKey:         []string{"space", "o"},
@@ -53,7 +55,9 @@ func (app *App) Run() {
 	if err != nil {
 		panic(err)
 	}
-	term.HideCursor()
+	if app.hideCursor {
+		term.HideCursor()
+	}
 
 	app.registerEvents()
 }

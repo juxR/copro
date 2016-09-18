@@ -93,13 +93,7 @@ func (s *Checkbox) RenderHeader() {
 
 func (s *Checkbox) RenderChoices(currentPosition int) {
 
-	output := ""
 	for _, choice := range s.Choices {
-		if choice.Type == "separator" {
-			output += "\n"
-			display(output)
-			return
-		}
 		isSelected := false
 		if choice.pointer == currentPosition {
 			isSelected = true
@@ -125,7 +119,6 @@ func (s *Checkbox) RenderChoices(currentPosition int) {
 
 		line += choice.Label
 
-		output += line
 		if isSelected {
 			displayCyan(line)
 			continue
