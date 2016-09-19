@@ -28,7 +28,6 @@ func (s *Input) Run() string {
 	for {
 		fmt.Printf("%s[?]%s %s: ", chalk.Yellow, chalk.ResetColor, s.Question)
 		userResponse, err := reader.ReadString('\n')
-		fmt.Println(len(userResponse))
 		if s.Required && len(strings.TrimSpace(userResponse)) <= 0 {
 			fmt.Printf("%s[%s]%s You can't leave this field empty%s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, chalk.ResetColor)
 			continue
