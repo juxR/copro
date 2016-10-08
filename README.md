@@ -14,8 +14,9 @@ Go package which add some basic interactive console user interfaces
   
 
 #[Getting started](#getting-started)
-A quick overview about the basics
-    
+
+A quick overview  
+
 ##[Install the package](#install-the-package)
 
     go get -u github.com/julienroland/copro/prompt
@@ -25,9 +26,9 @@ A quick overview about the basics
     package main
 
     import (
-    "fmt"
+        "fmt"
 
-    "github.com/julienroland/copro/prompt"
+        "github.com/julienroland/copro/prompt"
     )
 
     func main() {
@@ -45,10 +46,10 @@ You can find examples on the [http://github.com/julienroland/copro/example](gith
 
 #[TODOS](#todos)
 
-- [ ] Add custom validation for input
+- [ ] Add custom validation for input type
 - [ ] Add password field type
 - [ ] Write tests
-- [ ] Add auto-complete
+- [ ] Add auto-complete type
 
 #[License](#license)
 
