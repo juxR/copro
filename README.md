@@ -5,9 +5,9 @@ Go package which add some basic interactive console user interfaces
 ## Table of Contents
 
   1. [Getting started](#getting-started)
-    1. [Installation](#installation)
-    2. [Basic usage](#usage)
-  2. [Types of prompts](#prompts)
+    1. [Installation](#install-the-package)
+    2. [Basic usage](#basic-usage)
+  2. [Prompts](#prompts)
   3. [Examples](#examples)
   4. [TODOS](#todos)
   5. [License](#license)
@@ -16,11 +16,11 @@ Go package which add some basic interactive console user interfaces
 #[Getting started](#getting-started)
 A quick overview about the basics
     
-##[Install the package](#installation)
+##[Install the package](#install-the-package)
 
     go get -u github.com/julienroland/copro/prompt
 
-##[Basic usage](#usage)
+##[Basic usage](#basic-usage)
 
     package main
 
@@ -37,7 +37,7 @@ A quick overview about the basics
         fmt.Println(name)
     }
 
-#[Types of prompt](#prompt)
+#[Prompts](#prompt)
 TODO
 
 #[Examples](#examples)
