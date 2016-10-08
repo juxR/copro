@@ -39,10 +39,12 @@ A quick overview
     }
 
 #[Prompts](#prompt)
+
 TODO
 
 #[Examples](#examples)
-You can find examples on the [http://github.com/julienroland/copro/example](github repository)
+
+You can find examples on the [http://github.com/julienroland/copro/tree/master/examples](github repository)
 
 #[TODOS](#todos)
 
