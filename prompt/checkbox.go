@@ -3,6 +3,7 @@ package prompt
 import (
 	"fmt"
 
+	"github.com/julienroland/copro"
 	"github.com/julienroland/usg"
 )
 
@@ -10,7 +11,7 @@ type Checkbox struct {
 	Question      string
 	Choices       []*Choice
 	CheckedChoice []*Choice
-	app           *App
+	app           *copro.App
 }
 
 type CheckboxResult struct {
@@ -20,25 +21,25 @@ type CheckboxResult struct {
 
 func NewCheckbox() *Checkbox {
 	CheckboxList := new(Checkbox)
-	app := NewApp()
+	app := copro.NewApp()
 	CheckboxList.app = app
 	CheckboxList.app.Run()
 	return CheckboxList
 }
 
 func (s *Checkbox) Run() (CheckboxResult, error) {
-	s.app.entryCount = len(s.Choices) - 1
+	s.app.EntryCount = len(s.Choices) - 1
 	s.setChoicePointer()
 	s.manageDefaultPointer()
 
 	s.app.Renderer(func() {
 		s.RenderHeader()
-		s.RenderChoices(s.app.pointer)
+		s.RenderChoices(s.app.Pointer)
 	})
 
 	ids := []int{}
 	labels := []string{}
-	for _, pointer := range s.app.savedPointers {
+	for _, pointer := range s.app.SavedPointers {
 		for _, choice := range s.Choices {
 			if choice.pointer == pointer {
 				ids = append(ids, choice.ID)
@@ -51,24 +52,14 @@ func (s *Checkbox) Run() (CheckboxResult, error) {
 }
 
 func (s *Checkbox) manageDefaultPointer() {
-	ids := []int{}
-	for _, choice := range s.CheckedChoice {
-		ids = append(ids, choice.ID)
-	}
-	pointers := s.searchIdInChoice(ids, s.Choices)
-	s.app.savedPointers = pointers
-
-}
-func (s *Checkbox) searchIdInChoice(ids []int, choices []*Choice) []int {
 	pointers := []int{}
-	for _, choice := range choices {
-		for _, id := range ids {
-			if choice.ID == id {
-				pointers = append(pointers, choice.pointer)
-			}
+	for _, choice := range s.Choices {
+		if choice.Selected {
+			pointers = append(pointers, choice.pointer)
 		}
 	}
-	return pointers
+	s.app.SavedPointers = pointers
+
 }
 
 func (s *Checkbox) setChoicePointer() error {
@@ -79,16 +70,12 @@ func (s *Checkbox) setChoicePointer() error {
 }
 
 func (s *Checkbox) RenderHeader() {
-	content := ""
-
 	if len(s.Question) <= 0 {
 		fmt.Errorf("You need to ask something")
 	}
 
-	content += s.Question + " \n"
-	content += fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.SelectKey[0])
-
-	display(content)
+	copro.DisplayBlue(s.Question)
+	copro.DisplayGrey(fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.SelectKey[0]))
 }
 
 func (s *Checkbox) RenderChoices(currentPosition int) {
@@ -99,7 +86,7 @@ func (s *Checkbox) RenderChoices(currentPosition int) {
 			isSelected = true
 		}
 		isChecked := false
-		for _, pointer := range s.app.savedPointers {
+		for _, pointer := range s.app.SavedPointers {
 			if choice.pointer == pointer {
 				isChecked = true
 			}
@@ -120,14 +107,11 @@ func (s *Checkbox) RenderChoices(currentPosition int) {
 		line += choice.Label
 
 		if isSelected {
-			displayCyan(line)
+			copro.DisplayYellow(line)
 			continue
 		}
-		if isChecked {
-			displayYellow(line)
-			continue
-		}
-		display(line)
+
+		copro.Display(line)
 	}
 
 }

@@ -1,4 +1,4 @@
-package prompt
+package copro
 
 import (
 	"os"
@@ -9,10 +9,10 @@ import (
 )
 
 type App struct {
-	pointer        int
-	savedPointers  []int
+	Pointer        int
+	SavedPointers  []int
 	done           bool
-	entryCount     int
+	EntryCount     int
 	hideCursor     bool
 	KeyboardConfig KeyboardConfig
 	Keyboard       keyboard.Keyboard
@@ -22,7 +22,7 @@ type Choice struct {
 	ID      int
 	Label   string
 	Type    string
-	pointer int
+	Pointer int
 }
 
 type KeyboardConfig struct {
@@ -35,7 +35,7 @@ type KeyboardConfig struct {
 
 func NewApp() *App {
 	app := new(App)
-	app.pointer = 0
+	app.Pointer = 0
 	app.done = false
 	app.hideCursor = true
 	app.KeyboardConfig = KeyboardConfig{
@@ -69,14 +69,14 @@ func (app *App) registerEvents() {
 
 	app.Keyboard.Bind(func() {
 		exist := false
-		for i, pointer := range app.savedPointers {
-			if app.pointer == pointer {
+		for i, pointer := range app.SavedPointers {
+			if app.Pointer == pointer {
 				exist = true
-				app.savedPointers = append(app.savedPointers[:i], app.savedPointers[i+1:]...)
+				app.SavedPointers = append(app.SavedPointers[:i], app.SavedPointers[i+1:]...)
 			}
 		}
 		if !exist {
-			app.savedPointers = append(app.savedPointers, app.pointer)
+			app.SavedPointers = append(app.SavedPointers, app.Pointer)
 		}
 	}, app.KeyboardConfig.SelectKey...)
 
@@ -85,20 +85,20 @@ func (app *App) registerEvents() {
 	}, app.KeyboardConfig.ValidateKey...)
 
 	app.Keyboard.Bind(func() {
-		maxIndex := app.entryCount
-		if app.pointer+1 > maxIndex {
-			app.pointer = 0
+		maxIndex := app.EntryCount
+		if app.Pointer+1 > maxIndex {
+			app.Pointer = 0
 		} else {
-			app.pointer += 1
+			app.Pointer += 1
 		}
 	}, app.KeyboardConfig.DownNavigationKey...)
 
 	app.Keyboard.Bind(func() {
-		maxIndex := app.entryCount
-		if app.pointer-1 < 0 {
-			app.pointer = maxIndex
+		maxIndex := app.EntryCount
+		if app.Pointer-1 < 0 {
+			app.Pointer = maxIndex
 		} else {
-			app.pointer -= 1
+			app.Pointer -= 1
 		}
 	}, app.KeyboardConfig.UpNavigationKey...)
 }

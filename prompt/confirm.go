@@ -1,11 +1,11 @@
 package prompt
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"strings"
+
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/ttacon/chalk"
 )
@@ -18,12 +18,12 @@ func NewConfirm() *Confirm {
 	return new(Confirm)
 }
 
-func (s *Confirm) Run() bool {
-	var response bool
-	reader := bufio.NewReader(os.Stdin)
+func (confirm *Confirm) Run() bool {
+	response := false
 	for {
-		fmt.Printf("%s[?]%s %s: (Y/n) ", chalk.Yellow, chalk.ResetColor, s.Question)
-		userResponse, err := reader.ReadString('\n')
+		fmt.Printf("%s[?]%s %s: %s(Y/n)%s ", chalk.Yellow, chalk.ResetColor, confirm.Question, chalk.Red, chalk.ResetColor)
+		userInput, err := terminal.ReadPassword(0)
+		userResponse := string(userInput)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -35,6 +35,7 @@ func (s *Confirm) Run() bool {
 		} else if userResponse == "n" || userResponse == "no" {
 			return false
 		}
+		fmt.Println()
 	}
 
 	return response

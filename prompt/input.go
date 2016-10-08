@@ -12,31 +12,38 @@ import (
 )
 
 type Input struct {
-	Question string
-	Required bool
+	Question           string
+	Required           bool
+	MaximumNumberOfTry int
 }
 
 func NewInput() *Input {
 	input := new(Input)
 	input.Required = false
+	input.MaximumNumberOfTry = -1
 	return input
 }
 
-func (s *Input) Run() string {
+func (input *Input) Run() (string, error) {
 	response := ""
 	reader := bufio.NewReader(os.Stdin)
+	nbOfTry := 0
 	for {
-		fmt.Printf("%s[?]%s %s: ", chalk.Yellow, chalk.ResetColor, s.Question)
+		fmt.Printf("%s[?]%s %s: ", chalk.Yellow, chalk.ResetColor, input.Question)
 		userResponse, err := reader.ReadString('\n')
-		if s.Required && len(strings.TrimSpace(userResponse)) <= 0 {
+		nbOfTry++
+		if input.Required && len(strings.TrimSpace(userResponse)) <= 0 {
+			if nbOfTry >= input.MaximumNumberOfTry && input.MaximumNumberOfTry != -1 {
+				return "", fmt.Errorf("%s[%s]%s Number of maximun try reached %d %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, nbOfTry, chalk.ResetColor)
+			}
 			fmt.Printf("%s[%s]%s You can't leave this field empty%s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, chalk.ResetColor)
 			continue
 		}
 		if err != nil {
 			log.Fatal(err)
 		}
-		return userResponse
+		return userResponse, nil
 	}
 
-	return response
+	return response, nil
 }
