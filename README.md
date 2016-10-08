@@ -44,7 +44,7 @@ TODO
 
 #[Examples](#examples)
 
-You can find examples on the [http://github.com/julienroland/copro/tree/master/examples](github repository)
+You can find examples on the [github repository](http://github.com/julienroland/copro/tree/master/examples)
 
 #[TODOS](#todos)
 
