@@ -74,7 +74,7 @@ func (s *Checkbox) RenderHeader() {
 		fmt.Errorf("You need to ask something")
 	}
 
-	copro.DisplayBlue(s.Question)
+	copro.DisplayGreen(s.Question)
 	copro.DisplayGrey(fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.SelectKey[0]))
 }
 

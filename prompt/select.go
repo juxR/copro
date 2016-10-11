@@ -63,8 +63,8 @@ func (s *Select) RenderHeader() {
 		fmt.Errorf("You need to ask something")
 	}
 
-	copro.DisplayBlue(s.Question)
-	copro.DisplayGrey(fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.SelectKey[0]))
+	copro.DisplayGreen(s.Question)
+	copro.DisplayGrey(fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.ValidateKey[0]))
 }
 
 func (s *Select) RenderChoices(currentPosition int) {
