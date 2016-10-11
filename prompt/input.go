@@ -31,8 +31,9 @@ func (input *Input) Run() (string, error) {
 	for {
 		fmt.Printf("%s[?]%s %s: ", chalk.Yellow, chalk.ResetColor, input.Question)
 		userResponse, err := reader.ReadString('\n')
+		userResponse = strings.Replace(strings.TrimSpace(userResponse), "\n", "", 1)
 		nbOfTry++
-		if input.Required && len(strings.TrimSpace(userResponse)) <= 0 {
+		if input.Required && len(userResponse) <= 0 {
 			if nbOfTry >= input.MaximumNumberOfTry && input.MaximumNumberOfTry != -1 {
 				return "", fmt.Errorf("%s[%s]%s Number of maximun try reached %d %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, nbOfTry, chalk.ResetColor)
 			}
