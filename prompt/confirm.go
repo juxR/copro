@@ -12,6 +12,7 @@ import (
 
 type Confirm struct {
 	Question string
+	Default  string
 }
 
 func NewConfirm() *Confirm {
@@ -21,14 +22,21 @@ func NewConfirm() *Confirm {
 func (confirm *Confirm) Run() bool {
 	response := false
 	for {
-		fmt.Printf("%s[?]%s %s: %s(Y/n)%s ", chalk.Yellow, chalk.ResetColor, confirm.Question, chalk.Red, chalk.ResetColor)
+		if len(confirm.Default) > 0 {
+			fmt.Printf("%s[?]%s %s (yes/no) %s[%s]%s: ", chalk.Yellow, chalk.Green, confirm.Question, chalk.Yellow, confirm.Default, chalk.ResetColor)
+		} else {
+			fmt.Printf("%s[?]%s %s (yes/no)%s: ", chalk.Yellow, chalk.Green, confirm.Question, chalk.ResetColor)
+		}
 		userInput, err := terminal.ReadPassword(0)
-		userResponse := string(userInput)
 		if err != nil {
 			log.Fatal(err)
 		}
-
+		userResponse := string(userInput)
 		userResponse = strings.ToLower(strings.TrimSpace(userResponse))
+
+		if len(confirm.Default) > 0 && len(userResponse) <= 0 {
+			userResponse = confirm.Default
+		}
 
 		if userResponse == "y" || userResponse == "yes" {
 			return true
