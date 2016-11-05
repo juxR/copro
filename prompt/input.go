@@ -1,12 +1,10 @@
 package prompt
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
-	"strings"
 
+	linenoise "github.com/GeertJohan/go.linenoise"
 	"github.com/julienroland/usg"
 	"github.com/ttacon/chalk"
 )
@@ -33,20 +31,17 @@ func NewInput() *Input {
 
 func (input *Input) Run() (string, error) {
 	response := ""
-	reader := bufio.NewReader(os.Stdin)
 	nbOfTry := 0
 	for {
-		if len(input.Default) > 0 {
-			fmt.Printf("%s[?]%s %s %s[%s]%s: ", chalk.Yellow, chalk.Green, input.Question, chalk.Yellow, input.Default, chalk.ResetColor)
-		} else {
-			fmt.Printf("%s[?]%s %s%s: ", chalk.Yellow, chalk.Green, input.Question, chalk.ResetColor)
+		question := input.buildQuestion()
+		userResponse, err := linenoise.Line(question)
+		if err != nil {
+			log.Fatal(err)
 		}
-		userResponse, err := reader.ReadString('\n')
-		userResponse = strings.Replace(strings.TrimSpace(userResponse), "\n", "", 1)
 		if len(input.Default) > 0 && len(userResponse) <= 0 {
 			userResponse = input.Default
 		}
-		nbOfTry++
+
 		isValid := input.Validation(userResponse)
 		if !isValid {
 			if nbOfTry >= input.MaximumNumberOfTry && input.MaximumNumberOfTry != -1 {
@@ -55,11 +50,18 @@ func (input *Input) Run() (string, error) {
 			fmt.Printf("%s[%s]%s %s %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, input.ErrorMessage(userResponse), chalk.ResetColor)
 			continue
 		}
-		if err != nil {
-			log.Fatal(err)
-		}
+
+		nbOfTry++
 		return userResponse, nil
 	}
 
 	return response, nil
+}
+
+func (input *Input) buildQuestion() string {
+	hasDefaultValue := len(input.Default) > 0
+	if hasDefaultValue {
+		return fmt.Sprintf("%s[?]%s %s %s[%s]%s: ", chalk.Yellow, chalk.Green, input.Question, chalk.Yellow, input.Default, chalk.ResetColor)
+	}
+	return fmt.Sprintf("%s[?]%s %s%s: ", chalk.Yellow, chalk.Green, input.Question, chalk.ResetColor)
 }

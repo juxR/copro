@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/julienroland/copro/prompt"
 )
@@ -11,7 +12,8 @@ func main() {
 	ask.Question = "What's your age"
 	ask.Default = "18"
 	ask.Validation = func(answer string) bool {
-		if answer == "18" {
+		_, err := strconv.Atoi(answer)
+		if answer == "18" || err != nil {
 			return false
 		}
 		return true
