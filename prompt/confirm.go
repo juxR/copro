@@ -38,12 +38,14 @@ func (confirm *Confirm) Run() bool {
 			userResponse = confirm.Default
 		}
 
+		fmt.Println("")
 		if userResponse == "y" || userResponse == "yes" {
-			return true
+			response = true
+			break
 		} else if userResponse == "n" || userResponse == "no" {
-			return false
+			response = false
+			break
 		}
-		fmt.Println()
 	}
 
 	return response
