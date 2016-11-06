@@ -35,6 +35,9 @@ func (input *Input) Run() (string, error) {
 		question := input.buildQuestion()
 		userResponse, err := linenoise.Line(question)
 		if err != nil {
+			if err == linenoise.KillSignalError {
+				return "", fmt.Errorf("Question closed by the end user")
+			}
 			return "", err
 		}
 		if len(input.Default) > 0 && len(userResponse) <= 0 {
@@ -49,6 +52,7 @@ func (input *Input) Run() (string, error) {
 			fmt.Printf("%s[%s]%s %s %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, input.ErrorMessage(userResponse), chalk.ResetColor)
 			continue
 		}
+		linenoise.AddHistory(userResponse)
 
 		nbOfTry++
 		return userResponse, nil
