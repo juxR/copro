@@ -52,7 +52,6 @@ func (input *Input) Run() (string, error) {
 			fmt.Printf("%s[%s]%s %s %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, input.ErrorMessage(userResponse), chalk.ResetColor)
 			continue
 		}
-		linenoise.AddHistory(userResponse)
 
 		nbOfTry++
 		return userResponse, nil
