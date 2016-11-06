@@ -2,7 +2,6 @@ package prompt
 
 import (
 	"fmt"
-	"log"
 
 	linenoise "github.com/GeertJohan/go.linenoise"
 	"github.com/julienroland/usg"
@@ -36,7 +35,7 @@ func (input *Input) Run() (string, error) {
 		question := input.buildQuestion()
 		userResponse, err := linenoise.Line(question)
 		if err != nil {
-			log.Fatal(err)
+			return "", err
 		}
 		if len(input.Default) > 0 && len(userResponse) <= 0 {
 			userResponse = input.Default
