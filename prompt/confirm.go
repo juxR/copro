@@ -2,7 +2,7 @@ package prompt
 
 import (
 	"fmt"
-	"log"
+	"os"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -27,7 +27,12 @@ func (confirm *Confirm) Run() bool {
 		}
 		userResponse, err := readUserInput(question)
 		if err != nil {
-			log.Fatal(err)
+			if err == readline.ErrInterrupt {
+				fmt.Fprintln(os.Stderr, "Question closed by the user")
+				os.Exit(1)
+			}
+			fmt.Fprintln(os.Stderr, fmt.Sprint(err))
+			os.Exit(1)
 		}
 		userResponse = strings.ToLower(strings.TrimSpace(userResponse))
 

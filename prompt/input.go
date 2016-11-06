@@ -35,6 +35,9 @@ func (input *Input) Run() (string, error) {
 		question := input.buildQuestion()
 		userResponse, err := input.readUserInput(question)
 		if err != nil {
+			if err == readline.ErrInterrupt {
+				return "", fmt.Errorf("Question closed by the user")
+			}
 			return "", err
 		}
 		if len(input.Default) > 0 && len(userResponse) <= 0 {

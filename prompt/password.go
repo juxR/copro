@@ -21,6 +21,9 @@ func (password *Password) Run() (string, error) {
 		question := password.buildQuestion()
 		userResponse, err := password.readUserInput(question)
 		if err != nil {
+			if err == readline.ErrInterrupt {
+				return "", fmt.Errorf("Question closed by the user")
+			}
 			return "", err
 		}
 		if len(password.Default) > 0 && len(userResponse) <= 0 {
