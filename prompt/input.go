@@ -3,7 +3,7 @@ package prompt
 import (
 	"fmt"
 
-	linenoise "github.com/GeertJohan/go.linenoise"
+	"github.com/chzyer/readline"
 	"github.com/julienroland/usg"
 	"github.com/ttacon/chalk"
 )
@@ -14,6 +14,7 @@ type Input struct {
 	MaximumNumberOfTry int
 	ErrorMessage       func(string) string
 	Validation         func(string) bool
+	nbOfTry            int
 }
 
 func NewInput() *Input {
@@ -25,45 +26,67 @@ func NewInput() *Input {
 		return "You can't leave this field empty"
 	}
 	input.MaximumNumberOfTry = -1
+	input.nbOfTry = 0
 	return input
 }
 
 func (input *Input) Run() (string, error) {
-	response := ""
-	nbOfTry := 0
 	for {
 		question := input.buildQuestion()
-		userResponse, err := linenoise.Line(question)
+		userResponse, err := input.readUserInput(question)
 		if err != nil {
-			if err == linenoise.KillSignalError {
-				return "", fmt.Errorf("Question closed by the end user")
-			}
 			return "", err
 		}
 		if len(input.Default) > 0 && len(userResponse) <= 0 {
 			userResponse = input.Default
 		}
 
-		isValid := input.Validation(userResponse)
+		isValid, err := input.validate(userResponse)
+		if err != nil {
+			return "", err
+		}
 		if !isValid {
-			if nbOfTry >= input.MaximumNumberOfTry && input.MaximumNumberOfTry != -1 {
-				return "", fmt.Errorf("%s[%s]%s Number of maximun try reached %d %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, nbOfTry, chalk.ResetColor)
-			}
-			fmt.Printf("%s[%s]%s %s %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, input.ErrorMessage(userResponse), chalk.ResetColor)
 			continue
 		}
-
-		nbOfTry++
 		return userResponse, nil
 	}
+	return "", nil
+}
 
-	return response, nil
+func (input *Input) validate(userResponse string) (bool, error) {
+	input.nbOfTry++
+	isValid := input.Validation(userResponse)
+	if !isValid {
+		if input.nbOfTry >= input.MaximumNumberOfTry && input.MaximumNumberOfTry != -1 {
+			return true, fmt.Errorf("%s[%s]%s Number of maximun try reached %d %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, input.nbOfTry, chalk.ResetColor)
+		}
+		fmt.Printf("%s[%s]%s %s %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, input.ErrorMessage(userResponse), chalk.ResetColor)
+		return false, nil
+	}
+	return true, nil
+
+}
+func (input *Input) readUserInput(question string) (string, error) {
+	rl, err := readline.NewEx(&readline.Config{
+		VimMode: false,
+		Prompt:  question,
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer rl.Close()
+	userResponse, err := rl.Readline()
+	if err != nil {
+		return "", err
+	}
+	return userResponse, nil
 }
 
 func (input *Input) buildQuestion() string {
 	hasDefaultValue := len(input.Default) > 0
 	if hasDefaultValue {
 		return fmt.Sprintf("%s[?]%s %s %s[%s]%s: ", chalk.Yellow, chalk.Green, input.Question, chalk.Yellow, input.Default, chalk.ResetColor)
+
 	}
 	return fmt.Sprintf("%s[?]%s %s%s: ", chalk.Yellow, chalk.Green, input.Question, chalk.ResetColor)
 }
