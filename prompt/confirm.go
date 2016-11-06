@@ -5,8 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"golang.org/x/crypto/ssh/terminal"
-
+	"github.com/chzyer/readline"
 	"github.com/ttacon/chalk"
 )
 
@@ -22,23 +21,20 @@ func NewConfirm() *Confirm {
 func (confirm *Confirm) Run() bool {
 	response := false
 	for {
+		question := fmt.Sprintf("%s[?]%s %s (yes/no)%s: ", chalk.Yellow, chalk.Green, confirm.Question, chalk.ResetColor)
 		if len(confirm.Default) > 0 {
-			fmt.Printf("%s[?]%s %s (yes/no) %s[%s]%s: ", chalk.Yellow, chalk.Green, confirm.Question, chalk.Yellow, confirm.Default, chalk.ResetColor)
-		} else {
-			fmt.Printf("%s[?]%s %s (yes/no)%s: ", chalk.Yellow, chalk.Green, confirm.Question, chalk.ResetColor)
+			question = fmt.Sprintf("%s[?]%s %s (yes/no) %s[%s]%s: ", chalk.Yellow, chalk.Green, confirm.Question, chalk.Yellow, confirm.Default, chalk.ResetColor)
 		}
-		userInput, err := terminal.ReadPassword(0)
+		userResponse, err := readUserInput(question)
 		if err != nil {
 			log.Fatal(err)
 		}
-		userResponse := string(userInput)
 		userResponse = strings.ToLower(strings.TrimSpace(userResponse))
 
 		if len(confirm.Default) > 0 && len(userResponse) <= 0 {
 			userResponse = confirm.Default
 		}
 
-		fmt.Println("")
 		if userResponse == "y" || userResponse == "yes" {
 			response = true
 			break
@@ -49,4 +45,26 @@ func (confirm *Confirm) Run() bool {
 	}
 
 	return response
+}
+
+func readUserInput(question string) (string, error) {
+	rl, err := readline.NewEx(&readline.Config{
+		VimMode: false,
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer rl.Close()
+
+	setPasswordCfg := rl.GenPasswordConfig()
+	setPasswordCfg.SetListener(func(line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
+		rl.SetPrompt(question)
+		rl.Refresh()
+		return nil, 0, false
+	})
+	userResponse, err := rl.ReadPasswordWithConfig(setPasswordCfg)
+	if err != nil {
+		return "", err
+	}
+	return string(userResponse), nil
 }
