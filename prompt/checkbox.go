@@ -99,9 +99,9 @@ func (s *Checkbox) RenderChoices(currentPosition int) {
 		}
 
 		if isChecked {
-			line += usg.Get.CircleFilled
+			line += usg.Get.CircleFilled + " "
 		} else {
-			line += usg.Get.Circle
+			line += usg.Get.Circle + " "
 		}
 
 		line += " " + choice.Label
