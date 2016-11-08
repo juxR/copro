@@ -75,7 +75,7 @@ func (s *Checkbox) RenderHeader() {
 	}
 
 	copro.DisplayGreen(s.Question)
-	copro.DisplayGrey(fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.SelectKey[0]))
+	copro.Display(fmt.Sprintf("Press <%s> key to select an item", s.app.KeyboardConfig.SelectKey[0]))
 }
 
 func (s *Checkbox) RenderChoices(currentPosition int) {

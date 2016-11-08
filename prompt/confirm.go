@@ -55,21 +55,15 @@ func (confirm *Confirm) Run() bool {
 func readUserInput(question string) (string, error) {
 	rl, err := readline.NewEx(&readline.Config{
 		VimMode: false,
+		Prompt:  question,
 	})
 	if err != nil {
 		panic(err)
 	}
 	defer rl.Close()
-
-	setPasswordCfg := rl.GenPasswordConfig()
-	setPasswordCfg.SetListener(func(line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
-		rl.SetPrompt(question)
-		rl.Refresh()
-		return nil, 0, false
-	})
-	userResponse, err := rl.ReadPasswordWithConfig(setPasswordCfg)
+	userResponse, err := rl.Readline()
 	if err != nil {
 		return "", err
 	}
-	return string(userResponse), nil
+	return userResponse, nil
 }
