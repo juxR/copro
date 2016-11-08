@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/chzyer/readline"
+	"github.com/julienroland/usg"
 	"github.com/ttacon/chalk"
 )
 
@@ -47,6 +48,7 @@ func (confirm *Confirm) Run() bool {
 			response = false
 			break
 		}
+		fmt.Printf("%s[%s]%s %s %s\n", chalk.Red, usg.Get.CrossGraph, chalk.Yellow, "You must answer 'yes' or 'no'!", chalk.ResetColor)
 	}
 
 	return response
