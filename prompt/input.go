@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/chzyer/readline"
 	"github.com/julienroland/usg"
@@ -51,7 +52,7 @@ func (input *Input) Run() (string, error) {
 		if !isValid {
 			continue
 		}
-		return userResponse, nil
+		return strings.TrimSpace(userResponse), nil
 	}
 	return "", nil
 }
