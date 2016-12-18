@@ -16,7 +16,6 @@ func (app *App) Renderer(buffer func()) {
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		buffer()
 		termbox.Sync()
-		termbox.Flush()
 		app.Keyboard.Poll(termbox.PollEvent())
 	}
 	termbox.Close()

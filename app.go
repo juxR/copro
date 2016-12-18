@@ -64,6 +64,7 @@ func (app *App) Run() {
 
 func (app *App) registerEvents() {
 	app.Keyboard.Bind(func() {
+		term.Close()
 		os.Exit(1)
 	}, app.KeyboardConfig.Cancelkey...)
 
