@@ -16,6 +16,8 @@ type App struct {
 	hideCursor     bool
 	KeyboardConfig KeyboardConfig
 	Keyboard       keyboard.Keyboard
+	Width          int
+	Height         int
 }
 
 type Choice struct {
@@ -59,6 +61,9 @@ func (app *App) Run() {
 		term.HideCursor()
 	}
 
+	w, h := term.Size()
+	app.Width = w
+	app.Height = h
 	app.registerEvents()
 }
 

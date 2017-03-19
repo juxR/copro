@@ -11,25 +11,16 @@ func main() {
 	ask.Question = "[?] Choose what you want:"
 	ask.Choices = []*prompt.Choice{
 		{
+			Label:       "List",
+			IsSeparator: true,
+		},
+		{
 			ID:    1,
 			Label: "Apple",
 		},
 		{
 			ID:       2,
 			Label:    "Tomato",
-			Selected: true,
-		},
-		{
-			Label:       "Others",
-			IsSeparator: true,
-		},
-		{
-			ID:    3,
-			Label: "Orange",
-		},
-		{
-			ID:       4,
-			Label:    "Watermelon",
 			Selected: true,
 		},
 	}

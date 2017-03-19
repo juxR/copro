@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/julienroland/copro"
 	"github.com/julienroland/usg"
@@ -84,7 +85,23 @@ func (s *Checkbox) RenderHeader() {
 
 func (s *Checkbox) RenderChoices(currentPosition int) {
 
+	headSize := 2
+	perPage := s.app.Height - headSize - 1
+
+	nbOfSeparator := 0
 	for _, choice := range s.Choices {
+		if choice.IsSeparator {
+			nbOfSeparator++
+		}
+	}
+	limit := len(s.Choices)
+	pages := int(math.Ceil(float64(limit) / float64(perPage)))
+	current := 0
+	if currentPosition >= (perPage - nbOfSeparator) {
+		current = currentPosition
+	}
+	currentMax := int(math.Min(float64(limit), float64(current+perPage)))
+	for _, choice := range s.Choices[current:currentMax] {
 		if choice.IsSeparator {
 			copro.DisplayGrey(" --- " + choice.Label + " ---")
 			continue
@@ -120,5 +137,8 @@ func (s *Checkbox) RenderChoices(currentPosition int) {
 		}
 
 		copro.Display(line)
+	}
+	if pages > 1 && current != (limit-nbOfSeparator-1) {
+		copro.DisplayGrey(" --- more available ---")
 	}
 }
