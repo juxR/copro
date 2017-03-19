@@ -20,6 +20,10 @@ func main() {
 			Selected: true,
 		},
 		{
+			Label:       "Others",
+			IsSeparator: true,
+		},
+		{
 			ID:    3,
 			Label: "Orange",
 		},

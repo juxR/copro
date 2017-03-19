@@ -28,7 +28,8 @@ func NewSelect() *Select {
 }
 
 func (s *Select) Run() (SelectResult, error) {
-	s.app.EntryCount = len(s.Choices) - 1
+	choicesWithoutSeparator := getChoicesWithoutSeparator(s.Choices)
+	s.app.EntryCount = len(choicesWithoutSeparator) - 1
 	s.setChoicePointer()
 	s.manageDefaultPointer()
 
@@ -37,14 +38,14 @@ func (s *Select) Run() (SelectResult, error) {
 		s.RenderChoices(s.app.Pointer)
 	})
 
-	choice := s.Choices[s.app.Pointer]
+	choice := choicesWithoutSeparator[s.app.Pointer]
 	result := SelectResult{ID: choice.ID, Label: choice.Label}
 	return result, nil
 }
 
 func (s *Select) manageDefaultPointer() {
 	for _, choice := range s.Choices {
-		if choice.Selected {
+		if choice.Selected && !choice.IsSeparator {
 			s.app.Pointer = choice.pointer
 			break
 		}
@@ -52,8 +53,13 @@ func (s *Select) manageDefaultPointer() {
 }
 
 func (s *Select) setChoicePointer() error {
-	for index, _ := range s.Choices {
-		s.Choices[index].pointer = index
+	position := 0
+	for _, choice := range s.Choices {
+		if choice.IsSeparator {
+			continue
+		}
+		choice.pointer = position
+		position++
 	}
 	return nil
 }
@@ -70,6 +76,11 @@ func (s *Select) RenderHeader() {
 func (s *Select) RenderChoices(currentPosition int) {
 
 	for _, choice := range s.Choices {
+		if choice.IsSeparator {
+			copro.DisplayGrey(" --- " + choice.Label + " ---")
+			continue
+		}
+
 		isSelected := false
 		if choice.pointer == currentPosition {
 			isSelected = true
@@ -91,4 +102,15 @@ func (s *Select) RenderChoices(currentPosition int) {
 		copro.Display(line)
 	}
 
+}
+
+func getChoicesWithoutSeparator(allChoices []*Choice) []*Choice {
+	var choices []*Choice
+	for _, choice := range allChoices {
+		if choice.IsSeparator {
+			continue
+		}
+		choices = append(choices, choice)
+	}
+	return choices
 }

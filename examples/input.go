@@ -9,7 +9,7 @@ import (
 
 func main() {
 	ask := prompt.NewInput()
-	ask.Question = "What's your age"
+	ask.Question = "🔒  What's your age?"
 	ask.Default = "18"
 	ask.Validation = func(answer string) bool {
 		_, err := strconv.Atoi(answer)

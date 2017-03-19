@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -38,6 +39,8 @@ func (input *Input) Run() (string, error) {
 		if err != nil {
 			if err == readline.ErrInterrupt {
 				return "", fmt.Errorf("Question closed by the user")
+			} else if err == io.EOF {
+				break
 			}
 			return "", err
 		}
@@ -83,6 +86,7 @@ func (input *Input) readUserInput(question string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	userResponse = strings.TrimSpace(userResponse)
 	return userResponse, nil
 }
 

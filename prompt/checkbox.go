@@ -28,10 +28,9 @@ func NewCheckbox() *Checkbox {
 }
 
 func (s *Checkbox) Run() (CheckboxResult, error) {
-	s.app.EntryCount = len(s.Choices) - 1
+	s.app.EntryCount = len(getChoicesWithoutSeparator(s.Choices)) - 1
 	s.setChoicePointer()
 	s.manageDefaultPointer()
-
 	s.app.Renderer(func() {
 		s.RenderHeader()
 		s.RenderChoices(s.app.Pointer)
@@ -41,7 +40,7 @@ func (s *Checkbox) Run() (CheckboxResult, error) {
 	labels := []string{}
 	for _, pointer := range s.app.SavedPointers {
 		for _, choice := range s.Choices {
-			if choice.pointer == pointer {
+			if choice.pointer == pointer && !choice.IsSeparator {
 				ids = append(ids, choice.ID)
 				labels = append(labels, choice.Label)
 			}
@@ -54,7 +53,7 @@ func (s *Checkbox) Run() (CheckboxResult, error) {
 func (s *Checkbox) manageDefaultPointer() {
 	pointers := []int{}
 	for _, choice := range s.Choices {
-		if choice.Selected {
+		if choice.Selected && !choice.IsSeparator {
 			pointers = append(pointers, choice.pointer)
 		}
 	}
@@ -63,8 +62,13 @@ func (s *Checkbox) manageDefaultPointer() {
 }
 
 func (s *Checkbox) setChoicePointer() error {
-	for index, _ := range s.Choices {
-		s.Choices[index].pointer = index
+	position := 0
+	for _, choice := range s.Choices {
+		if choice.IsSeparator {
+			continue
+		}
+		choice.pointer = position
+		position++
 	}
 	return nil
 }
@@ -81,6 +85,10 @@ func (s *Checkbox) RenderHeader() {
 func (s *Checkbox) RenderChoices(currentPosition int) {
 
 	for _, choice := range s.Choices {
+		if choice.IsSeparator {
+			copro.DisplayGrey(" --- " + choice.Label + " ---")
+			continue
+		}
 		isSelected := false
 		if choice.pointer == currentPosition {
 			isSelected = true
@@ -113,5 +121,4 @@ func (s *Checkbox) RenderChoices(currentPosition int) {
 
 		copro.Display(line)
 	}
-
 }
