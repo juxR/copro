@@ -16,8 +16,8 @@ type Checkbox struct {
 }
 
 type CheckboxResult struct {
-	ID    []int
-	Label []string
+	ID    int
+	Label string
 }
 
 func NewCheckbox() *Checkbox {
@@ -28,7 +28,7 @@ func NewCheckbox() *Checkbox {
 	return CheckboxList
 }
 
-func (s *Checkbox) Run() (CheckboxResult, error) {
+func (s *Checkbox) Run() ([]CheckboxResult, error) {
 	s.app.EntryCount = len(getChoicesWithoutSeparator(s.Choices)) - 1
 	s.setChoicePointer()
 	s.manageDefaultPointer()
@@ -37,17 +37,17 @@ func (s *Checkbox) Run() (CheckboxResult, error) {
 		s.RenderChoices(s.app.Pointer)
 	})
 
-	ids := []int{}
-	labels := []string{}
+	result := []CheckboxResult{}
 	for _, pointer := range s.app.SavedPointers {
 		for _, choice := range s.Choices {
 			if choice.pointer == pointer && !choice.IsSeparator {
-				ids = append(ids, choice.ID)
-				labels = append(labels, choice.Label)
+				result = append(result, CheckboxResult{
+					ID:    choice.ID,
+					Label: choice.Label,
+				})
 			}
 		}
 	}
-	result := CheckboxResult{ID: ids, Label: labels}
 	return result, nil
 }
 
