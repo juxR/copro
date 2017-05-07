@@ -3,7 +3,7 @@ package copro
 import (
 	"os"
 
-	keyboard "github.com/jteeuwen/keyboard"
+	keyboard "github.com/pwaller/keyboard"
 	termbox "github.com/julienroland/keyboard-termbox"
 	term "github.com/nsf/termbox-go"
 )
