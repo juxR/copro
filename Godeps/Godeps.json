@@ -1,0 +1,16 @@
+{
+	"ImportPath": "github.com/julienroland/copro",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/mattn/go-runewidth",
+			"Comment": "v0.0.2-1-g14207d2",
+			"Rev": "14207d285c6c197daabb5c9793d63e7af9ab2d50"
+		},
+		{
+			"ImportPath": "github.com/nsf/termbox-go",
+			"Rev": "7994c181db7761ca3c67a217068cf31826113f5f"
+		}
+	]
+}

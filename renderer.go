@@ -10,15 +10,86 @@ import (
 var lastVerticalPosition int
 
 func (app *App) Renderer(buffer func()) {
-	for !app.done {
-		lastVerticalPosition = 0
-		termbox.SetOutputMode(termbox.OutputNormal)
-		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		buffer()
-		termbox.Sync()
-		app.Keyboard.Poll(termbox.PollEvent())
+	defer termbox.Close()
+
+	termbox.SetOutputMode(termbox.OutputNormal)
+	termbox.SetInputMode(termbox.InputEsc)
+	draw(buffer)
+mainloop:
+	for {
+		switch ev := termbox.PollEvent(); ev.Type {
+
+		case termbox.EventKey:
+			switch ev.Key {
+			case termbox.KeyEsc:
+				break mainloop
+			case termbox.KeyCtrlC:
+				break mainloop
+
+			case termbox.KeySpace:
+				app.selectCurrentPointer()
+
+			case termbox.KeyEnter:
+				break mainloop
+
+			case termbox.KeyArrowDown:
+				app.moveCurrentPointerDown()
+			case termbox.KeyArrowUp:
+				app.moveCurrentPointerUp()
+			}
+			switch ev.Ch {
+			case 'k':
+				app.moveCurrentPointerUp()
+			case 'j':
+				app.moveCurrentPointerDown()
+			case 'o':
+				app.selectCurrentPointer()
+			}
+		case termbox.EventError:
+			panic(ev.Err)
+		}
+
+		draw(buffer)
 	}
-	termbox.Close()
+}
+
+func (app *App) moveCurrentPointerUp() {
+
+	maxIndex := app.EntryCount
+	if app.Pointer-1 < 0 {
+		app.Pointer = maxIndex
+	} else {
+		app.Pointer -= 1
+	}
+}
+
+func (app *App) moveCurrentPointerDown() {
+	maxIndex := app.EntryCount
+	if app.Pointer+1 > maxIndex {
+		app.Pointer = 0
+	} else {
+		app.Pointer += 1
+	}
+}
+
+func (app *App) selectCurrentPointer() {
+	exist := false
+	for i, pointer := range app.SavedPointers {
+		if app.Pointer == pointer {
+			exist = true
+			app.SavedPointers = append(app.SavedPointers[:i], app.SavedPointers[i+1:]...)
+		}
+	}
+	if !exist {
+		app.SavedPointers = append(app.SavedPointers, app.Pointer)
+	}
+
+}
+func draw(buffer func()) {
+	lastVerticalPosition = 0
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	buffer()
+	termbox.Sync()
 }
 
 func Display(msg string) {

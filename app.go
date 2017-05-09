@@ -1,12 +1,6 @@
 package copro
 
-import (
-	"os"
-
-	keyboard "github.com/pwaller/keyboard"
-	termbox "github.com/julienroland/keyboard-termbox"
-	term "github.com/nsf/termbox-go"
-)
+import term "github.com/nsf/termbox-go"
 
 type App struct {
 	Pointer        int
@@ -15,7 +9,6 @@ type App struct {
 	EntryCount     int
 	hideCursor     bool
 	KeyboardConfig KeyboardConfig
-	Keyboard       keyboard.Keyboard
 	Width          int
 	Height         int
 }
@@ -42,18 +35,18 @@ func NewApp() *App {
 	app.hideCursor = true
 	app.KeyboardConfig = KeyboardConfig{
 		ValidateKey:       []string{"enter"},
-		SelectKey:         []string{"space", "o"},
+		SelectKey:         []string{"space"},
 		UpNavigationKey:   []string{"up", "k"},
 		DownNavigationKey: []string{"down", "j"},
 		Cancelkey:         []string{"ctrl+c", "esc"},
 	}
-	app.Keyboard = termbox.New()
 
 	return app
 }
 
 func (app *App) Run() {
 	err := term.Init()
+
 	if err != nil {
 		panic(err)
 	}
@@ -64,47 +57,5 @@ func (app *App) Run() {
 	w, h := term.Size()
 	app.Width = w
 	app.Height = h
-	app.registerEvents()
-}
 
-func (app *App) registerEvents() {
-	app.Keyboard.Bind(func() {
-		term.Close()
-		os.Exit(1)
-	}, app.KeyboardConfig.Cancelkey...)
-
-	app.Keyboard.Bind(func() {
-		exist := false
-		for i, pointer := range app.SavedPointers {
-			if app.Pointer == pointer {
-				exist = true
-				app.SavedPointers = append(app.SavedPointers[:i], app.SavedPointers[i+1:]...)
-			}
-		}
-		if !exist {
-			app.SavedPointers = append(app.SavedPointers, app.Pointer)
-		}
-	}, app.KeyboardConfig.SelectKey...)
-
-	app.Keyboard.Bind(func() {
-		app.done = true
-	}, app.KeyboardConfig.ValidateKey...)
-
-	app.Keyboard.Bind(func() {
-		maxIndex := app.EntryCount
-		if app.Pointer+1 > maxIndex {
-			app.Pointer = 0
-		} else {
-			app.Pointer += 1
-		}
-	}, app.KeyboardConfig.DownNavigationKey...)
-
-	app.Keyboard.Bind(func() {
-		maxIndex := app.EntryCount
-		if app.Pointer-1 < 0 {
-			app.Pointer = maxIndex
-		} else {
-			app.Pointer -= 1
-		}
-	}, app.KeyboardConfig.UpNavigationKey...)
 }
