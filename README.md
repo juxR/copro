@@ -8,6 +8,11 @@ Copro offer you interactive console user prompts like select, password,...
     1. [Installation](#install-the-package)
     2. [Basic usage](#basic-usage)
   2. [Prompts](#prompts)
+     1. [Input](#input)
+     2. [Password](#password)
+     3. [Confirm](#confirm)
+     4. [Select](#select)
+     5. [Checkbox](#checkbox)
   3. [Examples](#examples)
   4. [TODOS](#todos)
   5. [License](#license)
@@ -128,8 +133,8 @@ You can find examples on the [github repository](http://github.com/julienroland/
 
 # [TODOS](#todos)
 
-- [ x ] Add custom validation for input type
-- [ x ] Add password field type
+- [x] Add custom validation for input type
+- [x] Add password field type
 - [ ] Write tests
 - [ ] Add auto-complete type
 
