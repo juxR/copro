@@ -1,6 +1,6 @@
-#Console prompts 
+# Golang console interactive prompts 
 
-Go package which add some basic interactive console user interfaces
+Copro offer you interactive console user prompts like select, password,...
 
 ## Table of Contents
 
@@ -13,15 +13,15 @@ Go package which add some basic interactive console user interfaces
   5. [License](#license)
   
 
-#[Getting started](#getting-started)
+# [Getting started](#getting-started)
 
-A quick overview  
+A quick overview how simple is to use copro
 
-##[Install the package](#install-the-package)
+## [Install the package](#install-the-package)
 
     go get -u github.com/julienroland/copro/prompt
 
-##[Basic usage](#basic-usage)
+## [Basic usage](#basic-usage)
 
     package main
 
@@ -38,22 +38,102 @@ A quick overview
         fmt.Println(name)
     }
 
-#[Prompts](#prompt)
+# [Prompts](#prompt)
 
-TODO
+## [Input](#input)
+    
+    ask := prompt.NewInput()
+    ask.Question = "What's your name"
+    name, _ := ask.Run()
+    fmt.Println(name)
 
-#[Examples](#examples)
+## [Password](#password)
+
+    ask := prompt.NewPassword()
+	ask.Question = "Enter your password"
+	ask.Validation = func(answer string) bool {
+		return answer != "password"
+	}
+	ask.ErrorMessage = func(answer string) string {
+		return "Wrong password"
+	}
+	ask.MaximumNumberOfTry = 2
+	result, err := ask.Run()
+	fmt.Println(result, err)
+
+## [Confirm](#confirm)
+
+    ask := prompt.NewConfirm()
+	ask.Question = "Are you a gopher"
+	ask.Default = "yes"
+	result := ask.Run()
+	fmt.Println(result)
+
+## [Select](#select)
+
+    ask := prompt.NewSelect()
+	ask.Question = "[?] Choose what you want:"
+	ask.Choices = []*prompt.Choice{
+		{
+			ID:    1,
+			Label: "Apple",
+		},
+		{
+			ID:       2,
+			Label:    "Tomato",
+			Selected: true,
+		},
+		{
+			Label:       "Others",
+			IsSeparator: true,
+		},
+		{
+			ID:    3,
+			Label: "Orange",
+		},
+		{
+			ID:       4,
+			Label:    "Watermelon",
+			Selected: true,
+		},
+	}
+	result, err := ask.Run()
+	fmt.Println(result, err)
+
+## [Checkbox](#checkbox)
+
+    ask := prompt.NewCheckbox()
+	ask.Question = "[?] Choose what you want:"
+	ask.Choices = []*prompt.Choice{
+		{
+			Label:       "List",
+			IsSeparator: true,
+		},
+		{
+			ID:    1,
+			Label: "Apple",
+		},
+		{
+			ID:       2,
+			Label:    "Tomato",
+			Selected: true,
+		},
+	}
+	result, err := ask.Run()
+	fmt.Println(result, err)
+
+# [Examples](#examples)
 
 You can find examples on the [github repository](http://github.com/julienroland/copro/tree/master/examples)
 
-#[TODOS](#todos)
+# [TODOS](#todos)
 
-- [ ] Add custom validation for input type
-- [ ] Add password field type
+- [ x ] Add custom validation for input type
+- [ x ] Add password field type
 - [ ] Write tests
 - [ ] Add auto-complete type
 
-#[License](#license)
+# [License](#license)
 
 MIT License
 
