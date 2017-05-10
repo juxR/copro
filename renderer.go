@@ -1,6 +1,7 @@
 package copro
 
 import (
+	"os"
 	"strings"
 
 	runewidth "github.com/mattn/go-runewidth"
@@ -24,6 +25,8 @@ mainloop:
 			case termbox.KeyEsc:
 				break mainloop
 			case termbox.KeyCtrlC:
+				termbox.Close()
+				os.Exit(1)
 				break mainloop
 
 			case termbox.KeySpace:
